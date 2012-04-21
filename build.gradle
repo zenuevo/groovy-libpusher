@@ -44,7 +44,7 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             repository(url: "file:///Users/kirk/tmp/myRepo/")
 //            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
 //              authentication(userName: sonatypeUsername, password: sonatypePassword)
