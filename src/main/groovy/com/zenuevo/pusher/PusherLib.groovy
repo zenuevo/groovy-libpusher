@@ -6,17 +6,23 @@ import java.security.MessageDigest
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import static groovyx.net.http.ContentType.URLENC
-//import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
+//Copyright (c) 2010-2012 Zenuevo, LLC.  Michael Pangopoulos
+//
+//Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 /**
- * Class to send messages to Pusher's REST API. Plain groovy, no grails involved.
+ * Class to send messages to Pusher's REST API. Plain groovy.
  *
  * Please set pusherApplicationId, pusherApplicationKey, pusherApplicationSecret accordingly
  * before sending any request.
  *
- * @author Adapted by Kirk Stork from https://github.com/mostblind/grails-libpusher
+ * @author Kirk Stork, Zenuevo, LLC.  Adapted from https://github.com/mostblind/grails-libpusher. 
  * @author Michael Pangopoulos (based on http://tinyurl.com/2urje4s)
- * Copyright 2010. Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
 class PusherLib {
 
@@ -31,7 +37,6 @@ class PusherLib {
     pusherApplicationId = appId
     pusherApplicationKey = appKey
     pusherApplicationSecret = appSecret
-
   }
 
   private def byteArrayToString(byte[] data) {
@@ -50,7 +55,6 @@ class PusherLib {
    * @return
    */
   private def hmacsha256Representation(String data) {
-    println "====\nAbout to get hmac for: ${data}\n===="
     try {
       final SecretKeySpec signingKey = new SecretKeySpec(pusherApplicationSecret.getBytes(), "HmacSHA256")
 
@@ -190,13 +194,12 @@ class PusherLib {
   }
 
   /**
-   * Generate the authorization string required for private channels
-   * @param socketId
-   * @param channel
-   * @return String signed code
-   */
-
-  def genAuthString(String socketId, String channel, String channelData = null) {
+     * Generate the authorization string required for private channels
+     * @param socketId
+     * @param channel
+     * @param channelData Optional stringified json when using presence channel
+     * @return String signed code
+     */  def genAuthString(String socketId, String channel, String channelData = null) {
     def authToken = socketId + ':' + channel
 
     if (channelData) {

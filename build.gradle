@@ -1,16 +1,107 @@
+
 apply plugin:'groovy'
-apply plugin:'idea'
+apply plugin:'maven'
+apply plugin:'signing'
+
+group     = 'com.zenuevo.pusher'
+version   = '1.0'
 
 repositories {
   mavenCentral()
 }
 
 dependencies{
-  groovy localGroovy()
-//  groovy 'org.codehaus.groovy:groovy:1.8.6'
-//  compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
-  //  compile(group:'com.googlecode.json-simple', name: 'json-simple', version: '1.1')
-  testCompile 'junit:junit:4.8.2'
+    compile gradleApi()
+    groovy 'org.codehaus.groovy:groovy:1.8.6'
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+    testCompile 'junit:junit:4.8.2'
 }
 
+
+//
+// Packaging and deployment
+// Thanks to Yennick Trevels,
+// http://jedicoder.blogspot.com/2011/11/automated-gradle-project-deployment-to.html
+//
+
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+    classifier = 'javadoc'
+    from 'build/docs/groovydoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives groovydocJar
+    archives sourcesJar
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+            repository(url: "file:///Users/kirk/tmp/myRepo/")
+//            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+//              authentication(userName: sonatypeUsername, password: sonatypePassword)
+//            }
+            
+            pom.project {
+                modelVersion '4.0.0'
+                packaging 'jar'
+                name 'Groovy Pusher Library'
+                description 'Groovy package for accessing the Pusher REST api (see http://pusher.com)'
+                url 'http://github.com/zenuevo/groovy-libpusher'
+                organization {
+                  name 'Zenuevo, LLC'
+                  url 'http://github.com/zenuevo'
+                }
+                scm {
+                    url 'http://github.com/zenuevo/groovy-libpusher'
+                    connection "scm:git:'http://github.com/zenuevo/groovy-libpusher.git"
+                    developerConnection "scm:git:git@github.com:zenuevo/groovy-libpusher.git"
+                }
+                licenses {
+                    license {
+                        name 'The MIT License (MIT)'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'kastork'
+                        name 'Kirk Stork'
+                        organization 'Zenuevo, LLC'
+                        organizationUrl 'http://github.com/zenuevo'
+                    }
+                    developer {
+                        id 'mostblind'
+                        name 'Michael Pangopoulos'
+                    }
+                    developer {
+                        id 'sscheuermann'
+                        name 'Stephan Scheuermann'
+                    }
+                }
+            }
+//            pom.withXml { XmlProvider xmlProvider ->
+//                def xml = xmlProvider.asString()
+//                def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
+//                pomXml.version[0] + { packaging('jar') }
+//
+//                 def newXml = new StringWriter()
+//                 def printer = new XmlNodePrinter(new PrintWriter(newXml))
+//                 printer.preserveWhitespace = true
+//                 printer.print(pomXml)
+//                 xml.setLength(0)
+//                 xml.append(newXml.toString())
+//            }
+        }
+    }
+}
 
