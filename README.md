@@ -2,7 +2,7 @@
 
 Plain old Groovy library for the pusher REST API.
 
-This is slight re-organization of [grails-libpusher](https://github.com/mostblind/grails-libpusher) by [Michael Pangopoulos](https://github.com/mostblind).
+This is slight re-organization of [pusher-plugin](https://github.com/micpango/pusher-plugin) by [Michael Pangopoulos](https://github.com/micpango).
     
 and is provided under the same license (MIT).
 
